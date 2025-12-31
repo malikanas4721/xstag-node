@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XStag Pro | Professional Image Steganography</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="fas fa-user-secret"></i>
+                <span>XStag Pro</span>
+            </div>
+            <div class="nav-links">
+                <a href="#encrypt" class="nav-link" data-section="encrypt">
+                    <i class="fas fa-lock"></i> Encrypt
+                </a>
+                <a href="#decrypt" class="nav-link" data-section="decrypt">
+                    <i class="fas fa-unlock"></i> Decrypt
+                </a>
+                <a href="#dashboard" class="nav-link" data-section="dashboard">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#settings" class="nav-link" data-section="settings">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+                <div class="user-profile" id="user-profile" style="display: none;">
+                    <span id="user-name"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Encryption Section -->
+        <section class="section-card section-view" id="encrypt-section">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-lock"></i>
+                    <h2>Encrypt & Hide Message</h2>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Image Upload -->
+                <div class="input-group">
+                    <label class="input-label">
+                        <i class="fas fa-image"></i> Cover Image
+                    </label>
+                    <div class="file-upload-area" id="encrypt-upload">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <div class="upload-text">Click to upload or drag and drop</div>
+                            <div class="upload-subtext">PNG, JPEG, BMP, WebP, TIFF (Max 50MB)</div>
+                        </div>
+                        <input type="file" id="encrypt-file" accept="image/*" style="display: none;">
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="preview-container" id="encrypt-preview" style="display: none;">
+                        <img class="preview-image" id="encrypt-preview-img" alt="Preview">
+                        <div class="preview-info">
+                            <div class="preview-details">
+                                <div>
+                                    <div id="encrypt-file-name" class="file-name"></div>
+                                    <div id="encrypt-file-info" class="file-info"></div>
+                                </div>
+                                <button class="btn-icon" id="remove-encrypt-image" title="Remove image">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secret Message -->
+                <div class="input-group">
+                    <label class="input-label">
+                        <i class="fas fa-envelope"></i> Secret Message
+                    </label>
+                    <textarea class="form-textarea" id="encrypt-message" placeholder="Enter your secret message here..."
+                        rows="5"></textarea>
+                    <div class="char-counter">
+                        <span id="char-count">0</span> characters
+                        <span id="capacity-info" class="capacity-info"></span>
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div class="input-group">
+                    <label class="input-label">
+                        <i class="fas fa-key"></i> Encryption Password / Key
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="text" class="form-input mask-password" id="encrypt-password"
+                            placeholder="Enter a strong password for AES encryption" autocomplete="new-password"
+                            value="">
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="strength-bar" id="password-strength-bar"></div>
+                        </div>
+                        <div class="strength-text">
+                            <span id="password-strength-text">Password strength</span>
+                            <span id="password-score">0%</span>
+                        </div>
+                    </div>
+                    <div class="generate-btn-wrapper">
+                        <button class="btn-generate" id="generate-password">
+                            <i class="fas fa-magic"></i> Generate Secure Password
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Status Message -->
+                <div class="status-message" id="encrypt-status" style="display: none;"></div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container" id="encrypt-progress" style="display: none;">
+                    <div class="progress-header">
+                        <span>Processing...</span>
+                        <span id="encrypt-progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar" id="encrypt-progress-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button class="btn btn-primary btn-block" id="encrypt-btn">
+                    <i class="fas fa-lock"></i> Encrypt & Hide Message
+                </button>
+            </div>
+        </section>
+
+        <!-- Decryption Section -->
+        <section class="section-card section-view" id="decrypt-section" style="display: none;">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-unlock"></i>
+                    <h2>Decrypt & Extract Message</h2>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Image Upload -->
+                <div class="input-group">
+                    <label class="input-label">
+                        <i class="fas fa-image"></i> Stego Image
+                    </label>
+                    <div class="file-upload-area" id="decrypt-upload">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <div class="upload-text">Click to upload or drag and drop</div>
+                            <div class="upload-subtext">Upload an image encrypted with XStag Pro</div>
+                        </div>
+                        <input type="file" id="decrypt-file" accept="image/*" style="display: none;">
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="preview-container" id="decrypt-preview" style="display: none;">
+                        <img class="preview-image" id="decrypt-preview-img" alt="Preview">
+                        <div class="preview-info">
+                            <div class="preview-details">
+                                <div>
+                                    <div id="decrypt-file-name" class="file-name"></div>
+                                    <div id="decrypt-file-info" class="file-info"></div>
+                                </div>
+                                <button class="btn-icon" id="remove-decrypt-image" title="Remove image">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div class="input-group">
+                    <label class="input-label">
+                        <i class="fas fa-key"></i> Decryption Password / Key
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-unlock input-icon"></i>
+                        <input type="text" class="form-input mask-password" id="decrypt-password"
+                            placeholder="Enter the password used for encryption" autocomplete="off" value="">
+                    </div>
+                </div>
+
+                <!-- Status Message -->
+                <div class="status-message" id="decrypt-status" style="display: none;"></div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container" id="decrypt-progress" style="display: none;">
+                    <div class="progress-header">
+                        <span>Processing...</span>
+                        <span id="decrypt-progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar" id="decrypt-progress-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button class="btn btn-success btn-block" id="decrypt-btn">
+                    <i class="fas fa-unlock"></i> Decrypt & Extract Message
+                </button>
+
+                <!-- Extracted Message Display -->
+                <div class="result-container" id="decrypt-result" style="display: none;">
+                    <div class="result-header">
+                        <h3>
+                            <i class="fas fa-envelope-open-text"></i> Extracted Message
+                        </h3>
+                        <div class="result-actions">
+                            <button class="btn-icon" id="copy-message" title="Copy to clipboard">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="btn-icon" id="save-message" title="Save as file">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="result-content" id="decrypted-message">
+                        No message extracted yet.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section class="section-card section-view" id="dashboard-section" style="display: none;">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Dashboard</h2>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="dashboard-content" id="dashboard-content">
+                    <div class="stats-grid-dashboard">
+                        <div class="stat-card-dashboard">
+                            <div class="stat-icon-dashboard">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value-dashboard" id="encryption-count">0</div>
+                                <div class="stat-label-dashboard">Encryptions</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-dashboard">
+                            <div class="stat-icon-dashboard">
+                                <i class="fas fa-unlock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value-dashboard" id="decryption-count">0</div>
+                                <div class="stat-label-dashboard">Decryptions</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-dashboard">
+                            <div class="stat-icon-dashboard">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value-dashboard" id="total-operations">0</div>
+                                <div class="stat-label-dashboard">Total Operations</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-info">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list">
+                            <div class="activity-item" id="last-encryption">
+                                <i class="fas fa-lock"></i>
+                                <div>
+                                    <div class="activity-title">Last Encryption</div>
+                                    <div class="activity-time" id="last-encryption-time">Never</div>
+                                </div>
+                            </div>
+                            <div class="activity-item" id="last-decryption">
+                                <i class="fas fa-unlock"></i>
+                                <div>
+                                    <div class="activity-title">Last Decryption</div>
+                                    <div class="activity-time" id="last-decryption-time">Never</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-message" id="dashboard-login-message">
+                        <p>Please log in to view your statistics</p>
+                        <button class="btn btn-primary" onclick="showSection('settings')">
+                            <i class="fas fa-sign-in-alt"></i> Go to Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section class="section-card section-view" id="settings-section" style="display: none;">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-cog"></i>
+                    <h2>Settings</h2>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="settings-content">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-user"></i> Account</h3>
+                        <div class="user-info" id="user-info-display" style="display: none;">
+                            <div class="user-details">
+                                <div>
+                                    <div class="user-name-large" id="settings-user-name"></div>
+                                    <div class="user-email" id="settings-user-email"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger" id="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </div>
+                        <div class="login-section" id="login-section">
+                            <div class="auth-container">
+                                <div class="auth-header">
+                                    <h2 class="auth-title">Login</h2>
+                                    <p class="auth-subtitle">Access your secure steganography workspace</p>
+                                </div>
+
+                                <!-- Login Form -->
+                                <div class="auth-form active" id="login-form">
+                                    <div class="auth-input-wrapper">
+                                        <label class="auth-field-label">Enter your email address</label>
+                                        <div class="auth-input-group">
+                                            <i class="fas fa-envelope auth-input-icon"></i>
+                                            <input type="email" class="auth-input" id="login-email"
+                                                placeholder="Ex. yourname@company.com" autocomplete="email" value="">
+                                        </div>
+                                    </div>
+
+                                    <div class="auth-input-wrapper">
+                                        <label class="auth-field-label">Enter your password</label>
+                                        <div class="auth-input-group">
+                                            <i class="fas fa-lock auth-input-icon"></i>
+                                            <input type="password" class="auth-input" id="login-password"
+                                                placeholder="Enter your password" autocomplete="current-password"
+                                                value="">
+                                        </div>
+                                    </div>
+
+                                    <button class="auth-submit-btn" id="login-btn">
+                                        Login to your account
+                                    </button>
+                                    <div class="auth-status" id="login-status"></div>
+
+                                    <div class="auth-switch">
+                                        <span>Don't have an account?</span>
+                                        <button class="auth-switch-link" data-switch="signup">Register now</button>
+                                    </div>
+                                </div>
+
+                                <!-- Signup Form -->
+                                <div class="auth-form" id="signup-form" style="display: none;">
+                                    <div class="auth-header">
+                                        <h2 class="auth-title">Register now</h2>
+                                        <p class="auth-subtitle">Secure your spot in our professional steganography
+                                            platform</p>
+                                    </div>
+
+                                    <div class="auth-input-wrapper">
+                                        <label class="auth-field-label">What's your name?</label>
+                                        <div class="auth-name-row">
+                                            <div class="auth-input-group">
+                                                <i class="fas fa-user auth-input-icon"></i>
+                                                <input type="text" class="auth-input" id="signup-name"
+                                                    placeholder="Name" autocomplete="given-name" value="">
+                                            </div>
+                                            <div class="auth-input-group">
+                                                <i class="fas fa-user auth-input-icon"></i>
+                                                <input type="text" class="auth-input" id="signup-surname"
+                                                    placeholder="Surname" autocomplete="family-name" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="auth-input-wrapper">
+                                        <label class="auth-field-label">Enter your email address</label>
+                                        <div class="auth-input-group">
+                                            <i class="fas fa-envelope auth-input-icon"></i>
+                                            <input type="email" class="auth-input" id="signup-email"
+                                                placeholder="Ex. yourname@company.com" autocomplete="email" value="">
+                                        </div>
+                                    </div>
+
+                                    <div class="auth-input-wrapper">
+                                        <label class="auth-field-label">Create a password</label>
+                                        <div class="auth-input-group">
+                                            <i class="fas fa-lock auth-input-icon"></i>
+                                            <input type="password" class="auth-input" id="signup-password"
+                                                placeholder="Min 6 characters" autocomplete="new-password" value="">
+                                        </div>
+                                    </div>
+
+                                    <button class="auth-submit-btn" id="signup-btn">
+                                        Register for free
+                                    </button>
+                                    <div class="auth-status" id="signup-status"></div>
+
+                                    <div class="auth-switch">
+                                        <span>Already have an account?</span>
+                                        <button class="auth-switch-link" data-switch="login">Login here</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3><i class="fas fa-info-circle"></i> About</h3>
+                        <p>XStag Pro v3.0.0</p>
+                        <p>Professional Image Steganography with AES-256-GCM Encryption</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
